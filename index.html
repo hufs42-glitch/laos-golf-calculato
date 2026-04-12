@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>라오스 골프 여행 예산 계산기</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f4f0;min-height:100vh;padding:1rem}
+.w{max-width:700px;margin:0 auto;padding:1.5rem 1rem;font-family:'Noto Sans KR',sans-serif;color:#1a1a1a}
+h1{font-size:19px;font-weight:700;color:#1a6b3c;margin-bottom:3px}
+.sub{font-size:12px;color:#888;margin-bottom:1.25rem}
+.card{background:#fff;border:1px solid #e0e8e2;border-radius:10px;padding:1rem 1.2rem;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-title{font-size:12px;font-weight:700;color:#2a6b3c;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:12px;color:#555;font-weight:500}
+.f select{font-size:13px;padding:7px 9px;border:1px solid #ccd8cc;border-radius:6px;background:#fff;color:#1a1a1a;width:100%}
+.f select:focus{outline:none;border-color:#1a6b3c}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:6px 12px;border:1px solid #ccd8cc;border-radius:6px;background:#fff;color:#333}
+.radio-group input[type=radio]{accent-color:#1a6b3c}
+.radio-group label.checked{border-color:#1a6b3c;background:#e8f5ee;color:#1a5c2e;font-weight:600}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e8eee8}
+.toggle-row:last-child{border-bottom:none}
+.toggle-left{font-size:13px;color:#333}
+.toggle-sub{font-size:11px;color:#888;margin-top:1px}
+.toggle-track{position:relative;width:34px;height:20px;border-radius:10px;background:#ccc;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:#1a6b3c}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle-track.on::after{transform:translateX(14px)}
+.result-box{background:#1a6b3c;border-radius:12px;padding:1.25rem;color:#fff;margin-bottom:12px}
+.result-section{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2)}
+.result-section:last-child{border-bottom:none;margin-bottom:0}
+.rs-title{font-size:11px;color:rgba(255,255,255,.7);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.rs-row{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}
+.rs-row .lbl{color:rgba(255,255,255,.75)}
+.total-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.3)}
+.total-lbl{font-size:13px;color:rgba(255,255,255,.8)}
+.total-val{font-size:28px;font-weight:700}
+.per-row{text-align:right;font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
+.warn{background:#fffbe6;border:1px solid #ffe58f;border-radius:7px;padding:8px 12px;font-size:12px;color:#7a5c00;line-height:1.65;margin-bottom:10px;display:none}
+.warn.show{display:block}
+.cta{width:100%;padding:13px;background:#1a6b3c;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.cta:hover{background:#155c33}
+.note-bottom{font-size:11px;color:#999;text-align:center;margin-top:8px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>라오스 골프 여행 예산 계산기</h1>
+  <div class="sub">인원·골프장·옵션 선택 후 예상 비용을 즉시 확인하세요 (단위: USD)</div>
+
+  <div class="card">
+    <div class="card-title">기본 정보</div>
+    <div class="row">
+      <div class="f">
+        <label>여행 인원</label>
+        <select id="pax" onchange="calc()">
+          <option value="1">1명</option><option value="2">2명</option><option value="3">3명</option>
+          <option value="4" selected>4명</option><option value="5">5명</option><option value="6">6명</option>
+          <option value="7">7명</option><option value="8">8명</option><option value="9">9명</option>
+          <option value="10">10명</option><option value="11">11명</option><option value="12">12명</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>라운딩 횟수</label>
+        <select id="rounds" onchange="calc()">
+          <option value="1">1회</option><option value="2" selected>2회</option>
+          <option value="3">3회</option><option value="4">4회</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>숙박 일수</label>
+        <select id="nights" onchange="calc()">
+          <option value="1">1박</option><option value="2">2박</option><option value="3" selected>3박</option>
+          <option value="4">4박</option><option value="5">5박</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>숙박 타입</label>
+        <select id="roomtype" onchange="calc()">
+          <option value="single">1인 1실 (기본)</option>
+          <option value="double">2인 1실 (룸쉐어)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">골프장 선택</div>
+    <div class="f" style="margin-bottom:10px">
+      <label>골프장</label>
+      <select id="course" onchange="calc()">
+        <option value="롱비엔|76|86|13">롱비엔</option>
+        <option value="라오|52|62|0" selected>라오 골프</option>
+        <option value="레이크뷰|85|95|25">레이크뷰</option>
+        <option value="메콩|42|53|13">메콩</option>
+        <option value="부영|42|50|13">부영</option>
+        <option value="단사반|35|40|13">단사반</option>
+        <option value="라오아시아|52|52|13">라오 아시아</option>
+        <option value="루앙프라방|61|75|13">루앙프라방</option>
+      </select>
+    </div>
+    <div class="f">
+      <label>라운딩 요일</label>
+      <div class="radio-group" id="dow-group">
+        <label class="checked"><input type="radio" name="dow" value="weekday" checked onchange="updateRadio('dow-group');calc()"> 주중</label>
+        <label><input type="radio" name="dow" value="weekend" onchange="updateRadio('dow-group');calc()"> 주말 / 공휴일</label>
+      </div>
+    </div>
+    <div id="no-cart-notice" class="warn" style="margin-top:8px">라오 골프는 카트 없음 코스입니다. 카트 추가요금은 제외됩니다.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">카트 옵션</div>
+    <div class="f">
+      <label>카트 이용 방식</label>
+      <div class="radio-group" id="cart-group">
+        <label class="checked"><input type="radio" name="cart" value="2per1" checked onchange="updateRadio('cart-group');calc()"> 2인 1카트 (기본)</label>
+        <label><input type="radio" name="cart" value="1per1" onchange="updateRadio('cart-group');calc()"> 1인 1카트</label>
+        <label><input type="radio" name="cart" value="none" onchange="updateRadio('cart-group');calc()"> 카트 미사용</label>
+      </div>
+    </div>
+    <div id="cart-calc-note" style="font-size:11px;color:#888;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">숙소 선택</div>
+    <div class="f">
+      <label>숙소</label>
+      <select id="hotel" onchange="calc()">
+        <option value="두엉찬|25">두엉찬 (2성급) — $25/룸</option>
+        <option value="다오사반|35">다오사반 (3성급) — $35/룸</option>
+        <option value="민트라|65">민트라 (4성급) — $65/룸</option>
+        <option value="그랜드|50" selected>그랜드 (4성급) — $50/룸</option>
+        <option value="유은|50">유은 (4성급) — $50/룸</option>
+        <option value="무엉탄|60">무엉탄 (5성급) — $60/룸</option>
+        <option value="아마리 비엔티안|90">아마리 비엔티안 (5성급) — $90/룸</option>
+      </select>
+    </div>
+    <div id="room-note" style="font-size:11px;color:#888;margin-top:5px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">차량 렌트</div>
+    <div class="f">
+      <label>차량 이용 방식</label>
+      <div class="radio-group" id="car-group">
+        <label class="checked"><input type="radio" name="car" value="roundtrip" checked onchange="updateRadio('car-group');calc()"> 골프장↔숙소 왕복 ($70)</label>
+        <label><input type="radio" name="car" value="fullday" onchange="updateRadio('car-group');calc()"> 12시간 전용 ($90)</label>
+        <label><input type="radio" name="car" value="none" onchange="updateRadio('car-group');calc()"> 차량 불필요</label>
+      </div>
+      <div style="font-size:11px;color:#888;margin-top:5px">15인승 밴 기본 · 1~4인은 그랜드 카니발 운행 가능</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">팁 (자동 계산 — 켜기/끄기 가능)</div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-left">캐디팁</div>
+        <div class="toggle-sub" id="caddie-tip-sub">1인 1캐디 × $15</div>
+      </div>
+      <div class="toggle-track on" id="t-caddie" onclick="toggleTip('caddie')"></div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-left">기사팁</div>
+        <div class="toggle-sub" id="driver-tip-sub">왕복 $5 / 12시간 $10</div>
+      </div>
+      <div class="toggle-track on" id="t-driver" onclick="toggleTip('driver')"></div>
+    </div>
+  </div>
+
+  <div id="odd-warn" class="warn">홀수 인원입니다. 2인 1카트 기준 시 마지막 1명은 추가 카트가 필요합니다. 자동 반영됩니다.</div>
+
+  <div class="result-box">
+    <div class="result-section">
+      <div class="rs-title">골프 비용</div>
+      <div class="rs-row"><span class="lbl">그린피 (캐디+카트 포함)</span><span id="r-green">-</span></div>
+      <div class="rs-row" id="r-cart-extra-row" style="display:none"><span class="lbl">카트 추가요금</span><span id="r-cart-extra">-</span></div>
+    </div>
+    <div class="result-section">
+      <div class="rs-title">숙박 비용</div>
+      <div class="rs-row"><span class="lbl" id="r-hotel-lbl">숙박</span><span id="r-hotel">-</span></div>
+    </div>
+    <div class="result-section">
+      <div class="rs-title">차량 렌트</div>
+      <div class="rs-row"><span class="lbl">차량</span><span id="r-car">-</span></div>
+    </div>
+    <div class="result-section">
+      <div class="rs-title">팁</div>
+      <div class="rs-row"><span class="lbl">캐디팁</span><span id="r-caddie-tip">-</span></div>
+      <div class="rs-row"><span class="lbl">기사팁</span><span id="r-driver-tip">-</span></div>
+    </div>
+    <div class="total-row">
+      <div>
+        <div class="total-lbl">예상 총 비용 (팀 전체)</div>
+        <div class="per-row" id="r-per">1인당 약 $0</div>
+      </div>
+      <div class="total-val" id="r-total">$0</div>
+    </div>
+  </div>
+
+  <button class="cta" onclick="window.open('https://open.kakao.com/여기에카카오링크입력','_blank')">정확한 견적 문의하기 (카카오톡)</button>
+  <div class="note-bottom">※ 위 금액은 예상 견적으로 환율·시즌에 따라 달라질 수 있습니다<br>국제선 항공권 및 여행자보험은 포함되지 않습니다</div>
+</div>
+
+<script>
+const tipState={caddie:true,driver:true};
+
+function updateRadio(groupId){
+  document.querySelectorAll('#'+groupId+' label').forEach(function(l){
+    l.classList.toggle('checked',l.querySelector('input').checked);
+  });
+}
+
+function toggleTip(key){
+  tipState[key]=!tipState[key];
+  document.getElementById('t-'+key).classList.toggle('on',tipState[key]);
+  calc();
+}
+
+function calc(){
+  var pax=+document.getElementById('pax').value;
+  var rounds=+document.getElementById('rounds').value;
+  var nights=+document.getElementById('nights').value;
+  var roomtype=document.getElementById('roomtype').value;
+  var cv=document.getElementById('course').value.split('|');
+  var courseName=cv[0],weekdayRate=+cv[1],weekendRate=+cv[2],cartExtra=+cv[3];
+  var isNoCart=(courseName==='라오');
+  var dow=document.querySelector('input[name=dow]:checked').value;
+  var cartMode=document.querySelector('input[name=cart]:checked').value;
+  var hv=document.getElementById('hotel').value.split('|');
+  var hotelName=hv[0],hotelRate=+hv[1];
+  var carMode=document.querySelector('input[name=car]:checked').value;
+
+  document.getElementById('no-cart-notice').classList.toggle('show',isNoCart);
+  var showOdd=(!isNoCart&&cartMode==='2per1'&&pax%2!==0&&pax>1);
+  document.getElementById('odd-warn').classList.toggle('show',showOdd);
+
+  var greenFee=(dow==='weekday'?weekdayRate:weekendRate)*pax*rounds;
+
+  var cartCost=0,cartDesc='',cartExtraRow=false;
+  if(!isNoCart&&cartMode!=='none'){
+    if(cartMode==='2per1'){
+      cartDesc='2인 1카트 '+Math.floor(pax/2)+'대 (그린피 포함)';
+      if(pax%2!==0&&pax>1){cartCost=cartExtra*rounds;cartExtraRow=cartCost>0;cartDesc='2인 1카트 '+Math.floor(pax/2)+'대 + 추가 1대';}
+    } else if(cartMode==='1per1'){
+      cartCost=cartExtra*pax*rounds;cartDesc='1인 1카트 '+pax+'대';cartExtraRow=cartCost>0;
+    }
+  } else {
+    cartDesc=isNoCart?'해당 없음 (카트 없는 코스)':'미사용';
+  }
+  document.getElementById('cart-calc-note').textContent=cartDesc;
+  document.getElementById('r-cart-extra-row').style.display=cartExtraRow?'flex':'none';
+  document.getElementById('r-cart-extra').textContent=cartCost>0?'$'+cartCost:'-';
+
+  var rooms=pax,roomNote='';
+  if(roomtype==='single'){
+    rooms=pax;roomNote='1인 1실 × '+pax+'룸 × '+nights+'박';
+  } else {
+    rooms=Math.ceil(pax/2);
+    roomNote=pax%2?'2인 1실 '+Math.floor(pax/2)+'룸 + 싱글 1룸 × '+nights+'박':'2인 1실 × '+rooms+'룸 × '+nights+'박';
+  }
+  var hotelCost=hotelRate*rooms*nights;
+  document.getElementById('room-note').textContent=roomNote+' — '+hotelName;
+  document.getElementById('r-hotel-lbl').textContent='숙박 ('+hotelName+')';
+
+  var carCost=0;
+  if(carMode==='roundtrip') carCost=70*rounds;
+  else if(carMode==='fullday') carCost=90*rounds;
+
+  var caddieTip=tipState.caddie?15*pax*rounds:0;
+  var driverTip=0;
+  if(tipState.driver&&carMode!=='none') driverTip=(carMode==='roundtrip'?5:10)*rounds;
+
+  document.getElementById('caddie-tip-sub').textContent='1인 1캐디 × '+pax+'명 × '+rounds+'회 × $15 = $'+(15*pax*rounds);
+  document.getElementById('driver-tip-sub').textContent=carMode==='none'?'차량 미이용':(carMode==='roundtrip'?'단순왕복 $5':'12시간 $10')+' × '+rounds+'회';
+
+  var total=greenFee+cartCost+hotelCost+carCost+caddieTip+driverTip;
+  document.getElementById('r-green').textContent='$'+greenFee.toLocaleString();
+  document.getElementById('r-hotel').textContent='$'+hotelCost.toLocaleString();
+  document.getElementById('r-car').textContent=carMode==='none'?'미이용':'$'+carCost.toLocaleString();
+  document.getElementById('r-caddie-tip').textContent=tipState.caddie?'$'+caddieTip.toLocaleString():'제외';
+  document.getElementById('r-driver-tip').textContent=(carMode==='none'||!tipState.driver)?'제외':'$'+driverTip.toLocaleString();
+  document.getElementById('r-total').textContent='$'+total.toLocaleString();
+  document.getElementById('r-per').textContent='1인당 약 $'+Math.round(total/pax).toLocaleString();
+}
+calc();
+</script>
+</body>
+</html>
