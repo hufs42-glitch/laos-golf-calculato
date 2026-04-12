@@ -203,88 +203,62 @@ h1{font-size:19px;font-weight:700;color:#1a6b3c;margin-bottom:3px}
     </div>
   </div>
 
-  <button class="cta" onclick="window.open('https://open.kakao.com/여기에카카오링크입력','_blank')">정확한 견적 문의하기 (카카오톡)</button>
+  <button class="cta" onclick="window.open('https://open.kakao.com/o/saKGO23','_blank')">정확한 견적 문의하기 (카카오톡)</button>
   <div class="note-bottom">※ 위 금액은 예상 견적으로 환율·시즌에 따라 달라질 수 있습니다<br>국제선 항공권 및 여행자보험은 포함되지 않습니다</div>
 </div>
 
 <script>
-const tipState={caddie:true,driver:true};
-
-function updateRadio(groupId){
-  document.querySelectorAll('#'+groupId+' label').forEach(function(l){
-    l.classList.toggle('checked',l.querySelector('input').checked);
-  });
-}
-
-function toggleTip(key){
-  tipState[key]=!tipState[key];
-  document.getElementById('t-'+key).classList.toggle('on',tipState[key]);
-  calc();
-}
-
+var tipState={caddie:true,driver:true};
+function updateRadio(g){document.querySelectorAll('#'+g+' label').forEach(function(l){l.classList.toggle('checked',l.querySelector('input').checked);})}
+function toggleTip(k){tipState[k]=!tipState[k];document.getElementById('t-'+k).classList.toggle('on',tipState[k]);calc()}
 function calc(){
   var pax=+document.getElementById('pax').value;
   var rounds=+document.getElementById('rounds').value;
   var nights=+document.getElementById('nights').value;
   var roomtype=document.getElementById('roomtype').value;
   var cv=document.getElementById('course').value.split('|');
-  var courseName=cv[0],weekdayRate=+cv[1],weekendRate=+cv[2],cartExtra=+cv[3];
-  var isNoCart=(courseName==='라오');
+  var cName=cv[0],wdRate=+cv[1],weRate=+cv[2],cartEx=+cv[3];
+  var noCart=(cName==='라오');
   var dow=document.querySelector('input[name=dow]:checked').value;
   var cartMode=document.querySelector('input[name=cart]:checked').value;
   var hv=document.getElementById('hotel').value.split('|');
-  var hotelName=hv[0],hotelRate=+hv[1];
+  var hName=hv[0],hRate=+hv[1];
   var carMode=document.querySelector('input[name=car]:checked').value;
 
-  document.getElementById('no-cart-notice').classList.toggle('show',isNoCart);
-  var showOdd=(!isNoCart&&cartMode==='2per1'&&pax%2!==0&&pax>1);
-  document.getElementById('odd-warn').classList.toggle('show',showOdd);
+  document.getElementById('no-cart-notice').classList.toggle('show',noCart);
+  document.getElementById('odd-warn').classList.toggle('show',!noCart&&cartMode==='2per1'&&pax%2!==0&&pax>1);
 
-  var greenFee=(dow==='weekday'?weekdayRate:weekendRate)*pax*rounds;
-
-  var cartCost=0,cartDesc='',cartExtraRow=false;
-  if(!isNoCart&&cartMode!=='none'){
+  var green=(dow==='weekday'?wdRate:weRate)*pax*rounds;
+  var cartCost=0,cartDesc='',cartExRow=false;
+  if(!noCart&&cartMode!=='none'){
     if(cartMode==='2per1'){
       cartDesc='2인 1카트 '+Math.floor(pax/2)+'대 (그린피 포함)';
-      if(pax%2!==0&&pax>1){cartCost=cartExtra*rounds;cartExtraRow=cartCost>0;cartDesc='2인 1카트 '+Math.floor(pax/2)+'대 + 추가 1대';}
-    } else if(cartMode==='1per1'){
-      cartCost=cartExtra*pax*rounds;cartDesc='1인 1카트 '+pax+'대';cartExtraRow=cartCost>0;
-    }
-  } else {
-    cartDesc=isNoCart?'해당 없음 (카트 없는 코스)':'미사용';
-  }
+      if(pax%2!==0&&pax>1){cartCost=cartEx*rounds;cartExRow=cartCost>0;cartDesc='2인 1카트 '+Math.floor(pax/2)+'대 + 추가 1대';}
+    } else {cartCost=cartEx*pax*rounds;cartDesc='1인 1카트 '+pax+'대';cartExRow=cartCost>0;}
+  } else {cartDesc=noCart?'해당 없음 (카트 없는 코스)':'미사용';}
   document.getElementById('cart-calc-note').textContent=cartDesc;
-  document.getElementById('r-cart-extra-row').style.display=cartExtraRow?'flex':'none';
+  document.getElementById('r-cart-extra-row').style.display=cartExRow?'flex':'none';
   document.getElementById('r-cart-extra').textContent=cartCost>0?'$'+cartCost:'-';
 
-  var rooms=pax,roomNote='';
-  if(roomtype==='single'){
-    rooms=pax;roomNote='1인 1실 × '+pax+'룸 × '+nights+'박';
-  } else {
-    rooms=Math.ceil(pax/2);
-    roomNote=pax%2?'2인 1실 '+Math.floor(pax/2)+'룸 + 싱글 1룸 × '+nights+'박':'2인 1실 × '+rooms+'룸 × '+nights+'박';
-  }
-  var hotelCost=hotelRate*rooms*nights;
-  document.getElementById('room-note').textContent=roomNote+' — '+hotelName;
-  document.getElementById('r-hotel-lbl').textContent='숙박 ('+hotelName+')';
+  var rooms=roomtype==='single'?pax:Math.ceil(pax/2);
+  var roomNote=roomtype==='single'?'1인 1실 × '+pax+'룸 × '+nights+'박':(pax%2?'2인 1실 '+Math.floor(pax/2)+'룸 + 싱글 1룸 × '+nights+'박':'2인 1실 × '+rooms+'룸 × '+nights+'박');
+  var hotelCost=hRate*rooms*nights;
+  document.getElementById('room-note').textContent=roomNote+' — '+hName;
+  document.getElementById('r-hotel-lbl').textContent='숙박 ('+hName+')';
 
-  var carCost=0;
-  if(carMode==='roundtrip') carCost=70*rounds;
-  else if(carMode==='fullday') carCost=90*rounds;
-
-  var caddieTip=tipState.caddie?15*pax*rounds:0;
-  var driverTip=0;
-  if(tipState.driver&&carMode!=='none') driverTip=(carMode==='roundtrip'?5:10)*rounds;
+  var carCost=carMode==='roundtrip'?70*rounds:carMode==='fullday'?90*rounds:0;
+  var cadTip=tipState.caddie?15*pax*rounds:0;
+  var drvTip=tipState.driver&&carMode!=='none'?(carMode==='roundtrip'?5:10)*rounds:0;
 
   document.getElementById('caddie-tip-sub').textContent='1인 1캐디 × '+pax+'명 × '+rounds+'회 × $15 = $'+(15*pax*rounds);
   document.getElementById('driver-tip-sub').textContent=carMode==='none'?'차량 미이용':(carMode==='roundtrip'?'단순왕복 $5':'12시간 $10')+' × '+rounds+'회';
 
-  var total=greenFee+cartCost+hotelCost+carCost+caddieTip+driverTip;
-  document.getElementById('r-green').textContent='$'+greenFee.toLocaleString();
+  var total=green+cartCost+hotelCost+carCost+cadTip+drvTip;
+  document.getElementById('r-green').textContent='$'+green.toLocaleString();
   document.getElementById('r-hotel').textContent='$'+hotelCost.toLocaleString();
   document.getElementById('r-car').textContent=carMode==='none'?'미이용':'$'+carCost.toLocaleString();
-  document.getElementById('r-caddie-tip').textContent=tipState.caddie?'$'+caddieTip.toLocaleString():'제외';
-  document.getElementById('r-driver-tip').textContent=(carMode==='none'||!tipState.driver)?'제외':'$'+driverTip.toLocaleString();
+  document.getElementById('r-caddie-tip').textContent=tipState.caddie?'$'+cadTip.toLocaleString():'제외';
+  document.getElementById('r-driver-tip').textContent=(carMode==='none'||!tipState.driver)?'제외':'$'+drvTip.toLocaleString();
   document.getElementById('r-total').textContent='$'+total.toLocaleString();
   document.getElementById('r-per').textContent='1인당 약 $'+Math.round(total/pax).toLocaleString();
 }
