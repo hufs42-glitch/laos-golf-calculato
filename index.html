@@ -252,7 +252,7 @@ body{background:#f0f4f0;min-height:100vh;padding:1rem;font-family:'Noto Sans KR'
     <div class="rs">
       <div class="rs-t">골프 비용</div>
       <div id="r-golf-rows"></div>
-      <div class="rr" id="r-cart-extra-row" style="display:none"><span class="lb">카트 추가요금</span><span id="r-cart-extra">—</span></div>
+      <div class="rr" id="r-cart-extra-row" style="display:none"><span class="lb">1인 1카트 추가요금</span><span id="r-cart-extra">—</span></div>
     </div>
     <div class="rs">
       <div class="rs-t">숙박</div>
@@ -413,13 +413,14 @@ function calc(){
     var rate=dow==='weekday'?course.wd:course.we;
     var green=rate*pax;
     totalGreen+=green;
-    if(!noCart&&cartMode!=='none'){
-      if(cartMode==='2per1'&&pax%2!==0&&pax>1) totalCartExtra+=course.ex;
-      else if(cartMode==='1per1') totalCartExtra+=course.ex*pax;
+    if(!noCart&&cartMode==='1per1'){
+      totalCartExtra+=course.ex*pax;
     }
     var ncEl=document.getElementById('nc'+i);
     if(ncEl) ncEl.classList.toggle('show',noCart);
-    golfRows+='<div class="rr"><span class="lb">'+(i+1)+'일차 '+cName+' ($'+rate+'×'+pax+'명)</span><span>$'+green+'</span></div>';
+    var rowTotal=green+((!noCart&&cartMode==='1per1')?course.ex*pax:0);
+    var cartTag=(!noCart&&cartMode==='1per1'&&course.ex>0)?' [1인1카트 +$'+(course.ex*pax)+']':'';
+    golfRows+='<div class="rr"><span class="lb">'+(i+1)+'일차 '+cName+' ($'+rate+'×'+pax+'명'+cartTag+')</span><span>$'+rowTotal+'</span></div>';
   }
   document.getElementById('r-golf-rows').innerHTML=golfRows;
   document.getElementById('r-cart-extra-row').style.display=totalCartExtra>0?'flex':'none';
@@ -459,8 +460,8 @@ function calc(){
   document.getElementById('r-driver').textContent=(carMode==='none'||!opts.driver)?'제외':'$'+driverTip;
 
   var cartDesc='';
-  if(cartMode==='2per1') cartDesc='2인 1카트 '+Math.floor(pax/2)+'대'+(pax%2&&pax>1?' + 홀수 추가 1대':'');
-  else if(cartMode==='1per1') cartDesc='1인 1카트 '+pax+'대';
+  if(cartMode==='2per1') cartDesc='2인 1카트 (그린피에 포함)';
+  else if(cartMode==='1per1') cartDesc='1인 1카트 — 골프장별 추가요금 적용';
   else cartDesc='미사용';
   document.getElementById('cart-note').textContent=cartDesc;
 
