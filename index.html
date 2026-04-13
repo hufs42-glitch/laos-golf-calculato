@@ -364,7 +364,7 @@ function buildCourseBlocks(){
       if(dow===0||dow===6) autoDown='weekend';
     }
     var selCourse=prevCourse[i]||COURSES[i%COURSES.length].n;
-    var selDow=prevDow[i]||autoDown;
+    var selDow=startVal?autoDown:(prevDow[i]||autoDown);
 
     html+='<div class="course-block">';
     html+='<div class="day-label">'+(i+1)+'일차 라운딩'+(dateStr?' — '+dateStr:'')+'</div>';
