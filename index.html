@@ -344,12 +344,20 @@ function buildCourseBlocks(){
   wrap.querySelectorAll('.cb-course').forEach(function(s,i){prevCourse[i]=s.value;});
   wrap.querySelectorAll('.cb-dow-checked').forEach(function(s,i){prevDow[i]=s.value;});
 
-  var html='';
+  var arrivalNotice='';
+  if(startVal){
+    var arr=new Date(startVal);
+    var adow=arr.getDay();
+    arrivalNotice='<div class="warn show" style="margin-bottom:10px;background:#e8f5ee;border-color:#a5d6a7;color:#1a5c2e;">'+
+      '✈️ 입국일 ('+(arr.getMonth()+1)+'월 '+arr.getDate()+'일 · '+DAYS[adow]+') — 이동일로 라운딩 없음. 라운딩은 다음날부터 시작됩니다.</div>';
+  }
+
+  var html=arrivalNotice;
   for(var i=0;i<rounds;i++){
     var dateStr='', autoDown='weekday';
     if(startVal){
       var d=new Date(startVal);
-      d.setDate(d.getDate()+i);
+      d.setDate(d.getDate()+i+1);
       var dow=d.getDay();
       dateStr=(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+DAYS[dow]+')';
       if(dow===0||dow===6) autoDown='weekend';
@@ -385,7 +393,7 @@ function calc(){
   document.getElementById('r-name').textContent=document.getElementById('name').value||'—';
   document.getElementById('r-phone').textContent=document.getElementById('phone').value||'—';
   var sv=document.getElementById('startdate').value;
-  document.getElementById('r-date').textContent=sv?sv.replace(/-/g,'.'):'—';
+  document.getElementById('r-date').textContent=sv?sv.replace(/-/g,'.')+' (입국일)'  :'—';
   document.getElementById('r-basic').textContent=pax+'명 / '+rounds+'회 라운딩 / '+nights+'박';
 
   document.getElementById('odd-warn').classList.toggle('show',cartMode==='2per1'&&pax%2!==0&&pax>1);
