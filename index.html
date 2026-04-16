@@ -110,7 +110,7 @@ body{background:#f0f4f0;min-height:100vh;padding:1rem;font-family:'Noto Sans KR'
   <div class="card">
     <div class="card-title">골프장 선택 (라운딩별)</div>
     <div id="course-blocks"></div>
-    <div id="odd-warn" class="warn">홀수 인원입니다. 2인 1카트 선택 시 마지막 1명 추가 카트가 자동 반영됩니다.</div>
+    <div id="odd-warn" class="warn">홀수 인원입니다. 2인 1카트 기본 구성 시 마지막 1명의 추가 카트비가 자동 반영됩니다. (레이크뷰 +$25 / 그 외 골프장 +$13 / 라오는 해당 없음)</div>
   </div>
 
   <!-- 카트 옵션 -->
@@ -134,6 +134,7 @@ body{background:#f0f4f0;min-height:100vh;padding:1rem;font-family:'Noto Sans KR'
       <div class="f">
         <label>숙소</label>
         <select id="hotel" onchange="calc()">
+          <option value="자체진행|0">자체 진행 (고객 직접 예약) — $0</option>
           <option value="두엉찬|25">두엉찬 (2성급) — $25/룸</option>
           <option value="다오사반|35">다오사반 (3성급) — $35/룸</option>
           <option value="민트라|65">민트라 (4성급) — $65/룸</option>
@@ -330,10 +331,21 @@ function toggleOpt(k){
   calc();
 }
 
+var NON_GOLF=[
+  {n:'개인 일정 자유 휴식'},
+  {n:'방비엥 일일투어 (비용 별도 문의)'},
+  {n:'루왕프라방 일일투어 (비용 별도 문의)'}
+];
+
 function courseOptions(selected){
-  return COURSES.map(function(c){
+  var golf=COURSES.map(function(c){
     return '<option value="'+c.n+'"'+(c.n===selected?' selected':'')+'>'+c.n+'</option>';
   }).join('');
+  var sep='<option disabled>── 비골프 일정 ──</option>';
+  var ng=NON_GOLF.map(function(c){
+    return '<option value="'+c.n+'"'+(c.n===selected?' selected':'')+'>'+c.n+'</option>';
+  }).join('');
+  return golf+sep+ng;
 }
 
 function buildCourseBlocks(){
@@ -375,6 +387,7 @@ function buildCourseBlocks(){
     html+='<label class="'+(selDow==='weekend'?'on':'')+'" ><input class="cb-dow-checked" type="radio" name="dow'+i+'" value="weekend"'+(selDow==='weekend'?' checked':'')+' onchange="updateRg(\'dg'+i+'\');calc()"> 주말/공휴일</label>';
     html+='</div></div></div>';
     html+='<div class="warn" id="nc'+i+'">라오 골프는 카트 없는 코스입니다. 카트 추가요금이 제외됩니다.</div>';
+    html+='<div class="warn" id="ng'+i+'" style="background:#f0f4ff;border-color:#b3c4f7;color:#2a3a7a;">비골프 일정으로 선택되었습니다. 해당 라운딩 비용은 0달러로 계산됩니다.</div>';
     html+='</div>';
   }
   wrap.innerHTML=html;
@@ -399,32 +412,60 @@ function calc(){
 
   document.getElementById('odd-warn').classList.toggle('show',cartMode==='2per1'&&pax%2!==0&&pax>1);
 
-  var totalGreen=0,totalCartExtra=0,golfRows='';
+  var totalGreen=0,totalCartExtra=0,totalOddCart=0,golfRows='';
   for(var i=0;i<rounds;i++){
     var cSel=document.querySelector('.cb-course[data-idx="'+i+'"]');
     var dowSel=document.querySelector('input[name="dow'+i+'"]:checked');
     if(!cSel||!dowSel) continue;
     var cName=cSel.value;
     var dow=dowSel.value;
+
+    // 비골프 일정 처리
+    var isNonGolf=NON_GOLF.some(function(ng){return ng.n===cName;});
+    var ngEl=document.getElementById('ng'+i);
+    if(ngEl) ngEl.classList.toggle('show',isNonGolf);
+
     var course=null;
     for(var j=0;j<COURSES.length;j++){if(COURSES[j].n===cName){course=COURSES[j];break;}}
     if(!course) course=COURSES[0];
     var noCart=(cName==='라오');
+    var ncEl=document.getElementById('nc'+i);
+    if(ncEl) ncEl.classList.toggle('show',!isNonGolf&&noCart);
+
+    if(isNonGolf){
+      golfRows+='<div class="rr"><span class="lb">'+(i+1)+'일차 '+cName+'</span><span>$0</span></div>';
+      continue;
+    }
+
     var rate=dow==='weekday'?course.wd:course.we;
     var green=rate*pax;
     totalGreen+=green;
+
+    // 1인 1카트 추가요금
+    var cartExtraThis=0;
     if(!noCart&&cartMode==='1per1'){
-      totalCartExtra+=course.ex*pax;
+      cartExtraThis=course.ex*pax;
+      totalCartExtra+=cartExtraThis;
     }
-    var ncEl=document.getElementById('nc'+i);
-    if(ncEl) ncEl.classList.toggle('show',noCart);
-    var rowTotal=green+((!noCart&&cartMode==='1per1')?course.ex*pax:0);
-    var cartTag=(!noCart&&cartMode==='1per1'&&course.ex>0)?' [1인1카트 +$'+(course.ex*pax)+']':'';
+
+    // 홀수 인원 추가카트비 (2인 1카트 기본일 때)
+    var oddCartThis=0;
+    if(!noCart&&cartMode==='2per1'&&pax%2!==0&&pax>1){
+      oddCartThis=course.ex>0?course.ex:0; // 레이크뷰 $25, 나머지 $13 (course.ex 사용)
+      // 라오는 noCart이므로 이미 제외됨
+      totalOddCart+=oddCartThis;
+    }
+
+    var rowTotal=green+cartExtraThis+oddCartThis;
+    var cartTag='';
+    if(!noCart&&cartMode==='1per1'&&course.ex>0) cartTag=' [1인1카트 +$'+cartExtraThis+']';
+    if(!noCart&&cartMode==='2per1'&&pax%2!==0&&pax>1&&oddCartThis>0) cartTag+=' [홀수 추가카트 +$'+oddCartThis+']';
     golfRows+='<div class="rr"><span class="lb">'+(i+1)+'일차 '+cName+' ($'+rate+'×'+pax+'명'+cartTag+')</span><span>$'+rowTotal+'</span></div>';
   }
   document.getElementById('r-golf-rows').innerHTML=golfRows;
   document.getElementById('r-cart-extra-row').style.display=totalCartExtra>0?'flex':'none';
   document.getElementById('r-cart-extra').textContent='$'+totalCartExtra;
+  // 홀수 추가카트는 golfRows 안에 포함 표시됨 (별도 row 불필요)
 
   var rooms=roomtype==='single'?pax:Math.ceil(pax/2);
   var hotelCost=hRate*rooms*nights;
@@ -465,7 +506,7 @@ function calc(){
   else cartDesc='미사용';
   document.getElementById('cart-note').textContent=cartDesc;
 
-  var total=totalGreen+totalCartExtra+hotelCost+carCost+airportCost+guideCost+tourCost+caddieTip+driverTip;
+  var total=totalGreen+totalCartExtra+totalOddCart+hotelCost+carCost+airportCost+guideCost+tourCost+caddieTip+driverTip;
   document.getElementById('r-total').textContent='$'+total.toLocaleString();
   document.getElementById('r-per').textContent='1인당 약 $'+Math.round(total/pax).toLocaleString();
 }
