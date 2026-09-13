@@ -155,7 +155,7 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
       <div class="f"><label>고객명</label><input id="name" placeholder="홍길동" oninput="calc()"></div>
       <div class="f"><label>연락처</label><input id="phone" placeholder="010-0000-0000" oninput="calc()"></div>
     </div>
-    <div class="grid3">
+    <div class="grid2">
       <div class="f"><label>희망 출발일</label><input type="date" id="startdate" onchange="buildCourseBlocks()"></div>
       <div class="f"><label>여행 인원</label>
         <select id="pax" onchange="buildCourseBlocks()">
@@ -165,9 +165,8 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
           <option value="10">10명</option><option value="11">11명</option><option value="12">12명</option>
         </select>
       </div>
-      <div class="f"><label>메모 (내부용)</label><input id="memo" placeholder="예: VIP, 기업단체" oninput="calc()"></div>
     </div>
-    <div class="info-box" style="margin-top:8px">👥 여행 인원 4인 이상 시 일부 골프장(롱비엔·라오·단사반·루앙프라방, 비수기 기준)은 인원 할인 요금이 자동 적용됩니다.</div>
+    <div class="info-box" style="margin-top:8px">👥 여행 인원 4인 이상 시 일부 골프장은 인원 할인 요금이 자동 적용됩니다.</div>
   </div>
 
   <!-- 여행 설정 -->
@@ -217,9 +216,10 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
           <option value="그랜드|50" selected>그랜드 (4성급) — $50/룸</option>
           <option value="유은|60">유은 (4성급) — $60/룸</option>
           <option value="무엉탄|75">무엉탄 (5성급) — $75/룸</option>
-          <option value="아마리 비엔티안|80">아마리 비엔티안 (5성급) — $80/룸</option>
+          <option value="아마리 비엔티안|80">아마리 비엔티안 (5성급) — $80/룸 (1~2월 $105)</option>
           <option value="자체 진행|0">자체 진행 (고객 직접 예약) — $0</option>
         </select>
+        <div class="info-box" style="margin-top:8px">🏨 아마리 비엔티안은 27년 1~2월 출발 시 룸당 $105로 자동 적용됩니다 (그 외 기간 $80).</div>
       </div>
       <div class="f"><label>객실 타입</label>
         <div class="rg" id="room-group" style="margin-top:4px">
@@ -288,7 +288,6 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
       <div class="rp-row"><span class="rp-lb">연락처</span><span id="r-phone">—</span></div>
       <div class="rp-row"><span class="rp-lb">출발일</span><span id="r-date">—</span></div>
       <div class="rp-row"><span class="rp-lb">인원 / 라운딩 / 숙박</span><span id="r-basic">—</span></div>
-      <div class="rp-row" id="r-memo-row" style="display:none"><span class="rp-lb">메모</span><span id="r-memo"></span></div>
     </div>
     <div class="rp-section">
       <div class="rp-st">골프 비용</div>
@@ -566,6 +565,11 @@ function calc() {
   var cartMode = document.querySelector('input[name=cart]:checked').value;
   var hv       = document.getElementById('hotel').value.split('|');
   var hName    = hv[0], hRate = +hv[1];
+  var startValForHotel = document.getElementById('startdate').value;
+  if (hName === '아마리 비엔티안' && startValForHotel) {
+    var hArrMonth = parseDate(startValForHotel).getMonth(); // 0=1월, 1=2월
+    if (hArrMonth === 0 || hArrMonth === 1) hRate = 105; // 27년 1~2월 성수기 요금
+  }
   var roomtype = document.querySelector('input[name=roomtype]:checked').value;
   var carMode  = document.querySelector('input[name=car]:checked').value;
   var tourDays = +document.getElementById('tour-days').value;
@@ -694,9 +698,6 @@ function calc() {
   var sv = document.getElementById('startdate').value;
   document.getElementById('r-date').textContent  = sv ? sv.replace(/-/g,'.') + ' (입국일)' : '—';
   document.getElementById('r-basic').textContent = pax + '명 / ' + rounds + '회 라운딩 / ' + nights + '박';
-  var memo = document.getElementById('memo').value;
-  document.getElementById('r-memo-row').style.display = memo ? 'flex' : 'none';
-  document.getElementById('r-memo').textContent = memo;
 
   var golfHtml = '';
   golfLines.forEach(function(g){
@@ -853,7 +854,7 @@ function clearHistory(){
 }
 function resetForm(){
   if (!confirm('입력 내용을 초기화할까요?')) return;
-  ['name','phone','memo'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['name','phone'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('startdate').value = '';
   document.getElementById('pax').value    = '4';
   document.getElementById('rounds').value = '2';
