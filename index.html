@@ -109,28 +109,17 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
     <button class="sb-btn active" id="nav-quote" onclick="showTab('quote')">📋 견적 생성</button>
     <button class="sb-btn" id="nav-history" onclick="showTab('history')">📁 견적 이력 <span class="sb-count" id="hist-count">0</span></button>
     <div class="sb-divider"></div>
-    <div class="sb-section">요금표 (비수기)</div>
-    <div class="sb-rates">
-      <b>롱비엔</b> 주중$76/주말$86<br>
-      &nbsp;4인↑ $71/$81 · 스포츠(월/목)$70<br>
-      <b>라오</b> 주중$52/주말$62<br>
-      &nbsp;4인↑ $50/$60 · 스포츠(수/금)$45<br>
-      <b>레이크뷰</b> $85/$95<br>
-      <b>메콩</b> $42/$53 &nbsp;<b>부영</b> $42/$50<br>
-      <b>단사반</b> $35/$40 · 4인↑$30/$35<br>
-      <b>루앙프라방</b> $61/$75 · 4인↑$58/$72
-    </div>
-    <div class="sb-divider"></div>
-    <div class="sb-section">요금표 (성수기 10월~익년2월)</div>
+    <div class="sb-section">요금표</div>
     <div class="sb-rates">
       <b>롱비엔</b> 주중$113/주말$122<br>
       <b>라오</b> 주중$55/주말$65<br>
       <b>레이크뷰</b> 주중$103/주말$113<br>
       <b>메콩</b> 10-11월 $58/$68 · 12-2월 $75/$87<br>
       <b>부영</b> 10-11월 $62/$73 · 12-2월 $78/$91<br>
-      <b>방비엥 LAO Asia</b> 주중·주말 공히 $60 · 4인↑ $57 (전 시즌 동일)<br>
-      <b>단사반·루앙프라방</b> 성수기 요금 미정 (공지 예정, 비수기 요금 임시 적용)<br>
-      1인1카트 변경: 레이크뷰 +$25 · 라오 없음 · 나머지 +$13<br>
+      <b>방비엥 LAO Asia</b> 주중·주말 공히 $60<br>
+      <b>단사반</b> 주중$45/주말$55<br>
+      <b>루앙프라방</b> 주중$61/주말$76<br>
+      1인1카트 변경: 레이크뷰 +$25 · 라오 없음 · 나머지 +$15<br>
       <span style="color:rgba(255,255,255,.35)">※ 출발일 입력 시 라운딩 날짜에 맞춰 자동 적용</span>
     </div>
   </div>
@@ -194,8 +183,8 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
         </div>
       </div>
     </div>
-    <div id="odd-warn" class="warn">⚠️ 홀수 인원 — 2인 1카트 기준 시 마지막 1명은 1인 1카트를 이용하며, 골프장별 추가요금(레이크뷰 $25 / 나머지 $13)이 자동 반영됩니다</div>
-    <div class="info-box">🗓️ 10월~익년 2월은 성수기로 그린피가 인상됩니다. 희망 출발일을 입력하면 각 라운딩 날짜에 맞춰 성수기 요금(10~11월 / 12~2월)이 자동 반영됩니다. (메콩·부영은 12~2월에 한 번 더 인상, 단사반·루앙프라방은 성수기 요금 미정으로 공지 전까지 비수기 요금이 임시 적용됩니다. 카트 추가요금은 연중 동일)</div>
+    <div id="odd-warn" class="warn">⚠️ 홀수 인원 — 2인 1카트 기준 시 마지막 1명은 1인 1카트를 이용하며, 골프장별 추가요금(레이크뷰 $25 / 나머지 $15)이 자동 반영됩니다</div>
+    <div class="info-box">🗓️ 10월~익년 2월은 성수기로 그린피가 인상됩니다. 희망 출발일을 입력하면 각 라운딩 날짜에 맞춰 성수기 요금(10~11월 / 12~2월)이 자동 반영됩니다. (메콩·부영은 12~2월에 한 번 더 인상. 카트 추가요금은 연중 동일)</div>
   </div>
 
   <!-- 골프장 선택 -->
@@ -216,10 +205,10 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
           <option value="그랜드|50" selected>그랜드 (4성급) — $50/룸</option>
           <option value="유은|60">유은 (4성급) — $60/룸</option>
           <option value="무엉탄|75">무엉탄 (5성급) — $75/룸</option>
-          <option value="아마리 비엔티안|80">아마리 비엔티안 (5성급) — $80/룸 (1~2월 $105)</option>
+          <option value="아마리 비엔티안|80">아마리 비엔티안 (5성급) — $80/룸 (10월~익년 2월 $100)</option>
           <option value="자체 진행|0">자체 진행 (고객 직접 예약) — $0</option>
         </select>
-        <div class="info-box" style="margin-top:8px">🏨 아마리 비엔티안은 27년 1~2월 출발 시 룸당 $105로 자동 적용됩니다 (그 외 기간 $80).</div>
+        <div class="info-box" style="margin-top:8px">🏨 아마리 비엔티안은 10월~익년 2월 출발 시 룸당 $100으로 자동 적용됩니다 (그 외 기간 $80).</div>
       </div>
       <div class="f"><label>객실 타입</label>
         <div class="rg" id="room-group" style="margin-top:4px">
@@ -348,22 +337,24 @@ body{background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--ink)
 
 <script>
 // ══ 데이터 ══
-// peak1 = 10~11월 성수기, peak2 = 12~익년2월 성수기 (2인1카트 기준 그린피). 미지정 골프장(단사반·루앙프라방)은 연중 비수기 요금과 동일.
+// peak1 = 10~11월 성수기, peak2 = 12~익년2월 성수기 (2인1카트 기준 그린피).
 var COURSES = [
-  {n:'롱비엔',    wd:76, we:86, wd4:71, we4:81, sports:70, sportsDay:'월/목', ex:13, has4p:true,  hasSports:true,
+  {n:'롱비엔',    wd:76, we:86, wd4:71, we4:81, sports:70, sportsDay:'월/목', ex:15, has4p:true,  hasSports:true,
     peak1:{wd:113, we:122}, peak2:{wd:113, we:122}},
   {n:'라오',      wd:52, we:62, wd4:50, we4:60, sports:45, sportsDay:'수/금',  ex:0,  has4p:true,  hasSports:true,
     peak1:{wd:55,  we:65},  peak2:{wd:55,  we:65}},
   {n:'레이크뷰',  wd:85, we:95, wd4:85, we4:95, sports:0,  sportsDay:'',      ex:25, has4p:false, hasSports:false,
     peak1:{wd:103, we:113}, peak2:{wd:103, we:113}},
-  {n:'메콩',      wd:42, we:53, wd4:42, we4:53, sports:0,  sportsDay:'',      ex:13, has4p:false, hasSports:false,
+  {n:'메콩',      wd:42, we:53, wd4:42, we4:53, sports:0,  sportsDay:'',      ex:15, has4p:false, hasSports:false,
     peak1:{wd:58,  we:68},  peak2:{wd:75,  we:87}},
-  {n:'부영',      wd:42, we:50, wd4:42, we4:50, sports:0,  sportsDay:'',      ex:13, has4p:false, hasSports:false,
+  {n:'부영',      wd:42, we:50, wd4:42, we4:50, sports:0,  sportsDay:'',      ex:15, has4p:false, hasSports:false,
     peak1:{wd:62,  we:73},  peak2:{wd:78,  we:91}},
-  {n:'단사반',    wd:35, we:40, wd4:30, we4:35, sports:0,  sportsDay:'',      ex:13, has4p:true,  hasSports:false},
-  {n:'방비엥 LAO Asia',    wd:60, we:60, wd4:57, we4:57, sports:0,  sportsDay:'',      ex:13, has4p:true, all4p:true, hasSports:false,
+  {n:'단사반',    wd:35, we:40, wd4:35, we4:40, sports:0,  sportsDay:'',      ex:15, has4p:false, hasSports:false,
+    peak1:{wd:45,  we:55},  peak2:{wd:45,  we:55}},
+  {n:'방비엥 LAO Asia',    wd:60, we:60, wd4:60, we4:60, sports:0,  sportsDay:'',      ex:15, has4p:false, hasSports:false,
     peak1:{wd:60,  we:60},  peak2:{wd:60,  we:60}},
-  {n:'루앙프라방',wd:61, we:75, wd4:58, we4:72, sports:0,  sportsDay:'',      ex:13, has4p:true,  hasSports:false}
+  {n:'루앙프라방',wd:61, we:75, wd4:61, we4:75, sports:0,  sportsDay:'',      ex:15, has4p:false, hasSports:false,
+    peak1:{wd:61,  we:76},  peak2:{wd:61,  we:76}}
 ];
 var DAYS = ['일','월','화','수','목','금','토'];
 var opts = {airport:false, guide:false, tour:false};
@@ -567,8 +558,8 @@ function calc() {
   var hName    = hv[0], hRate = +hv[1];
   var startValForHotel = document.getElementById('startdate').value;
   if (hName === '아마리 비엔티안' && startValForHotel) {
-    var hArrMonth = parseDate(startValForHotel).getMonth(); // 0=1월, 1=2월
-    if (hArrMonth === 0 || hArrMonth === 1) hRate = 105; // 27년 1~2월 성수기 요금
+    var hArrMonth = parseDate(startValForHotel).getMonth(); // 0=1월 ... 9=10월
+    if (hArrMonth >= 9 || hArrMonth <= 1) hRate = 100; // 10월~익년 2월 성수기 요금
   }
   var roomtype = document.querySelector('input[name=roomtype]:checked').value;
   var carMode  = document.querySelector('input[name=car]:checked').value;
@@ -615,9 +606,7 @@ function calc() {
 
     var roundDate  = getRoundDate(i);
     var season     = getSeason(roundDate);
-    var pending    = season !== 'off' && (c.n === '단사반' || c.n === '루앙프라방');
-    var seasonTag  = pending ? ' [성수기 요금 미정·비수기가 임시적용]'
-                    : season === 'peak1' ? ' [성수기 10~11월]'
+    var seasonTag  = season === 'peak1' ? ' [성수기 10~11월]'
                     : season === 'peak2' ? ' [성수기 12~2월]' : '';
 
     var rate = getRate(c, dowVal, pax, roundDate);
